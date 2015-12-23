@@ -1,6 +1,10 @@
-package com.liyuncong.application.common_tools;
+package com.liyuncong.application.usetools;
 
 import java.io.File;
+
+import com.liyuncong.application.commontools.DoNothing;
+import com.liyuncong.application.commontools.FileOperate;
+import com.liyuncong.application.commontools.FileTools;
 
 public class UseTool {
 /**
