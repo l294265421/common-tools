@@ -1,13 +1,18 @@
 package com.liyuncong.application.commontools;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -233,9 +238,64 @@ public class FileTools {
 		}
 
 	}
+	
+	/**
+	 * 把一行文本追加到目标文件中
+	 * @param target
+	 * @param line
+	 */
+	public static void appendLineToFile(File target, String line) {
+		try(OutputStream os = new FileOutputStream(target, true);
+				Writer writer = new OutputStreamWriter(os, "utf-8");
+				BufferedWriter bw = new BufferedWriter(writer)) {
+			bw.write(line);
+			bw.write(System.lineSeparator());
+			bw.flush();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 把一行文本追加到目标文件中
+	 * @param target
+	 * @param line
+	 */
+	public static void appendLineToFile(String target, String line) {
+		appendLineToFile(new File(target), line);
+	}
+	
+	/**
+	 * 把is中的内容打印出来
+	 * @param is
+	 */
+	public static void print(InputStream is, String charsetName) {
+		try(Reader reader = new InputStreamReader(is, charsetName);
+				BufferedReader bufferedReader = new BufferedReader(reader);){
+			String line;
+			while ((line = bufferedReader.readLine()) != null) {
+				System.out.println(line);
+			}
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+				
+	}
+	
+	/**
+	 * 把is中的内容打印出来
+	 * @param is
+	 */
+	public static void print(InputStream is) {
+		print(is, GlobalValue.CHARSET);
+	}
 
 	public static void main(String[] args) {
-		File file = new File("D:\\dc");
-		FileTools.removeFirstLineOfAllFile(file);
+		File file = new File("downloadfail.txt");
+		FileTools.appendLineToFile(file, "test");
 	}
 }
