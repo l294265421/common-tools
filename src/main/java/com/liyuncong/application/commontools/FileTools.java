@@ -14,6 +14,7 @@ import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -24,6 +25,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
+/**
+ * 本类提供的操作限于文本文件。
+ * @author liyuncong
+ *
+ */
 public class FileTools {
 	private FileTools() {
 		
@@ -268,32 +274,48 @@ public class FileTools {
 	}
 	
 	/**
-	 * 把is中的内容打印出来
+	 * 把输出流转移给某个输出流
 	 * @param is
 	 */
-	public static void print(InputStream is, String charsetName) {
-		try(Reader reader = new InputStreamReader(is, charsetName);
-				BufferedReader bufferedReader = new BufferedReader(reader);){
-			String line;
-			while ((line = bufferedReader.readLine()) != null) {
-				System.out.println(line);
-			}
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+	public static void transfer(InputStream is, OutputStream os, Charset fromCs, Charset ToCs) {
+		try(Reader reader = new InputStreamReader(is, fromCs);) {
+			transfer(reader, os, ToCs);
 		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 把Reader转移给某个输出流
+	 * @param is
+	 */
+	public static void transfer(Reader reader, OutputStream os, Charset ToCs) {
+		try(Writer writer = new OutputStreamWriter(os, ToCs)) {
+			transfer(reader, writer);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 				
 	}
 	
 	/**
-	 * 把is中的内容打印出来
+	 * 把Reader转移给某个Writer
 	 * @param is
 	 */
-	public static void print(InputStream is) {
-		print(is, GlobalValue.CHARSET);
+	public static void transfer(Reader reader, Writer os) {
+		try(BufferedReader br = new BufferedReader(reader);
+				BufferedWriter bw = new BufferedWriter(os);) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				bw.write(line);
+				bw.write(System.lineSeparator());
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
-
+	
 	public static void main(String[] args) {
 		File file = new File("downloadfail.txt");
 		FileTools.appendLineToFile(file, "test");
