@@ -16,9 +16,12 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 import java.util.concurrent.ExecutorService;
@@ -111,6 +114,27 @@ public class FileTools {
 		return result;
 	}
 	
+	public static void writeLinesToFile(List<String> lines, 
+			String charsetName, File target) {
+		Path path = target.toPath();
+		try {
+			Files.write(path, lines, Charset.forName(charsetName), 
+					StandardOpenOption.CREATE);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void writeLinesToFile(List<String> lines, 
+			String charsetName, String target) {
+		writeLinesToFile(lines, charsetName, new File(target));;
+	}
+	
+	public static void writeLinesToFile(List<String> lines, 
+			String target) {
+		writeLinesToFile(lines, "utf-8", new File(target));;
+	}
+	
 	/**
 	 * 用默认的字符集读取文本中所有文本
 	 * @param fileName 文件名
@@ -119,6 +143,35 @@ public class FileTools {
 	 */
 	public static String readFile(String fileName) throws IOException {
 		return readFile(fileName, GlobalValue.CHARSET);
+	}
+	
+	public static List<String> readAllLinesFromFile(Path path, Charset cs) {
+		List<String> lines = null;
+		try {
+			lines = Files.readAllLines(path);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return lines;
+	}
+	
+	public static List<String> readAllLinesFromFile(Path path) {
+		return readAllLinesFromFile(path, Charset.
+				forName(GlobalValue.CHARSET));
+	}
+	
+	public static List<String> readAllLinesFromFile(String path, Charset cs) {
+		return readAllLinesFromFile(Paths.get(path), cs);
+	}
+	
+	public static List<String> readAllLinesFromFile(String path, String cs) {
+		return readAllLinesFromFile(path, Charset.
+				forName(cs));
+	}
+	
+	public static List<String> readAllLinesFromFile(String path) {
+		return readAllLinesFromFile(path, Charset.
+				forName(GlobalValue.CHARSET));
 	}
 	
 	/**
