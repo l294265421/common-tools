@@ -148,7 +148,7 @@ public class FileTools {
 	public static List<String> readAllLinesFromFile(Path path, Charset cs) {
 		List<String> lines = null;
 		try {
-			lines = Files.readAllLines(path);
+			lines = Files.readAllLines(path, cs);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
