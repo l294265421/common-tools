@@ -92,7 +92,7 @@ public class FileTools {
 	}
 	
 	/**
-	 * 用默认的字符集把字符串写进文件里
+	 * 用默认的字符集(utf-8)把字符串写进文件里
 	 * @param str 字符串
 	 * @param fileName 文件路径
 	 */
@@ -136,13 +136,17 @@ public class FileTools {
 	}
 	
 	/**
-	 * 用默认的字符集读取文本中所有文本
+	 * 用默认的字符集(utf-8)读取文本中所有文本
 	 * @param fileName 文件名
 	 * @return 文件中所有的文本
-	 * @throws IOException
 	 */
-	public static String readFile(String fileName) throws IOException {
-		return readFile(fileName, GlobalValue.CHARSET);
+	public static String readFile(String fileName){
+		try {
+			return readFile(fileName, GlobalValue.CHARSET);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "";
 	}
 	
 	public static List<String> readAllLinesFromFile(Path path, Charset cs) {
