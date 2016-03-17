@@ -107,11 +107,16 @@ public class FileTools {
 	 * @return 文件中所有的文本
 	 * @throws IOException
 	 */
-	public static String readFile(String fileName, String charsetName) throws IOException {
+	public static String readFile(String fileName, String charsetName) {
 		Path path = Paths.get(fileName);
-		byte[] bytes = Files.readAllBytes(path);
-		String result = new String(bytes, charsetName);
-		return result;
+		try {
+			byte[] bytes = Files.readAllBytes(path);
+			String result = new String(bytes, charsetName);
+			return result;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public static void writeLinesToFile(List<String> lines, 
@@ -141,12 +146,7 @@ public class FileTools {
 	 * @return 文件中所有的文本
 	 */
 	public static String readFile(String fileName){
-		try {
-			return readFile(fileName, GlobalValue.CHARSET);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return "";
+		return readFile(fileName, GlobalValue.CHARSET);
 	}
 	
 	public static List<String> readAllLinesFromFile(Path path, Charset cs) {
