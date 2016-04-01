@@ -109,6 +109,10 @@ public class FileTools {
 	 */
 	public static String readFile(String fileName, String charsetName) {
 		Path path = Paths.get(fileName);
+		return readFile(path, charsetName);
+	}
+	
+	public static String readFile(Path path, String charsetName) {
 		try {
 			byte[] bytes = Files.readAllBytes(path);
 			String result = new String(bytes, charsetName);
@@ -119,25 +123,12 @@ public class FileTools {
 		return null;
 	}
 	
-	public static void writeLinesToFile(List<String> lines, 
-			String charsetName, File target) {
-		Path path = target.toPath();
-		try {
-			Files.write(path, lines, Charset.forName(charsetName), 
-					StandardOpenOption.CREATE);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public static String readFile(File file, String charsetName) {
+		return readFile(file.toPath(), charsetName);
 	}
 	
-	public static void writeLinesToFile(List<String> lines, 
-			String charsetName, String target) {
-		writeLinesToFile(lines, charsetName, new File(target));;
-	}
-	
-	public static void writeLinesToFile(List<String> lines, 
-			String target) {
-		writeLinesToFile(lines, "utf-8", new File(target));;
+	public static String readFile(File file) {
+		return readFile(file.toPath(), GlobalValue.CHARSET);
 	}
 	
 	/**
@@ -176,6 +167,27 @@ public class FileTools {
 	public static List<String> readAllLinesFromFile(String path) {
 		return readAllLinesFromFile(path, Charset.
 				forName(GlobalValue.CHARSET));
+	}
+	
+	public static void writeLinesToFile(List<String> lines, 
+			String charsetName, File target) {
+		Path path = target.toPath();
+		try {
+			Files.write(path, lines, Charset.forName(charsetName), 
+					StandardOpenOption.CREATE);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void writeLinesToFile(List<String> lines, 
+			String charsetName, String target) {
+		writeLinesToFile(lines, charsetName, new File(target));;
+	}
+	
+	public static void writeLinesToFile(List<String> lines, 
+			String target) {
+		writeLinesToFile(lines, "utf-8", new File(target));;
 	}
 	
 	/**
@@ -373,8 +385,33 @@ public class FileTools {
 		}
 	}
 	
-	public static void main(String[] args) {
-		File file = new File("downloadfail.txt");
-		FileTools.appendLineToFile(file, "test");
+	public static void convertCharset(File file, Charset origin, 
+			Charset target) {
+		String pathName = file.toString();
+		String content = readFile(pathName, origin.toString());
+		writeStringToFile(content, pathName, target.toString());
 	}
+	
+	public static void convertCharset(File file, String origin, 
+			String target) {
+		convertCharset(file, Charset.forName(origin), 
+				Charset.forName(target));
+	}
+	
+	public static void allFileConvertCharset(File startDirectory, 
+			final String origin, final String target) {
+		traverse(startDirectory, new DoNothing(), new FileOperate() {
+			
+			@Override
+			public void action(File file) {
+				convertCharset(file, origin, target);
+			}
+		});
+	}
+	
+	public static void main(String[] args) {
+		File file = new File("D:\\bishe\\china.com.cn\\");
+		allFileConvertCharset(file, "gbk", "utf-8");
+	}
+	
 }
